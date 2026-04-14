@@ -8,10 +8,10 @@ Abre tu terminal y ejecuta los siguientes comandos para inicializar el proyecto 
 
 ```bash
 # 1. Crear el proyecto (escribe 'y' si te pide confirmación)
-npm create vite@latest gamepedia -- --template react
+git clone https://github.com/JosephRangel/frontend2-week5-activity.git
 
 # 2. Entrar a la carpeta recién creada
-cd gamepedia
+cd frontend2-week5-activity
 
 # 3. Instalar las dependencias de Node.js
 npm install
