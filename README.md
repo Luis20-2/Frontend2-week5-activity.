@@ -1,4 +1,4 @@
-# 🎮 Proyecto Gamepedia - Frontend II
+# 🎮 Proyecto gamepedia - Frontend II
 
 Bienvenido a la construcción de tu primera Single Page Application (SPA) conectada a una base de datos real de videojuegos, utilizando React, React Router y la API de RAWG.
 
@@ -15,9 +15,6 @@ cd gamepedia
 
 # 3. Instalar las dependencias de Node.js
 npm install
-
-# 4. Instalar React Router para la navegación entre páginas
-npm install react-router-dom
 ```
 
 ## 🔑 Paso 2: Tu Credencial de Desarrollador (API Key)
@@ -27,23 +24,18 @@ Para poder descargar la información de los videojuegos, necesitas una llave de 
 2. Ve a tu perfil en la esquina superior derecha y selecciona **"Get an API key"**.
 3. Copia el código que te generen y guárdalo en un lugar seguro. Lo usaremos en el Paso 5.
 
-## 🧹 Paso 3: Limpieza del Proyecto
+## 🏃‍♂️ Paso 3: Ejecutar el Proyecto
 
-Vite nos entrega código de ejemplo que no necesitamos. Vamos a limpiar:
-1. Elimina el archivo `src/App.css`.
-2. Abre `src/index.css`, borra todo el código que trae por defecto y pega el CSS de Gamepedia brindado en clase.
-3. Abre `src/App.jsx`, borra todo y déjalo temporalmente así:
+Para levantar el servidor de desarrollo y ver tu catálogo de juegos en vivo:
 
-```jsx
-function App() {
-  return <h1>Gamepedia en construcción</h1>
-}
-export default App;
+```bash
+npm run dev
 ```
+Abre `http://localhost:5173` en tu navegador para ver el resultado.
 
-## 📂 Paso 4: Estructura de Carpetas
+## 📂 Estructura de Carpetas
 
-Crea la siguiente arquitectura dentro de la carpeta `src/`:
+Arquitectura dentro de la carpeta `src/`:
 
 ```text
 src/
@@ -58,27 +50,122 @@ src/
 
 *(Asegúrate de que cada archivo tenga la estructura básica de un componente de React exportado por defecto `export default ComponentName`)*.
 
-## 🔗 Paso 5: Enrutamiento Principal
 
-1. Abre `src/main.jsx`. Asegúrate de importar tus estilos (`import './index.css'`) y envuelve tu `<App />` con el `<BrowserRouter>`.
-2. Ve a `src/App.jsx`, importa tus páginas y configura las `<Routes>`:
-    * `/` -> `<Home />`
-    * `/game/:id` -> `<GameDetails />`
-    * `/favorites` -> `<Favorites />`
+## ☁️ Configuracion para publicar en Docker Hub
 
-## 🔌 Paso 6: Consumo de la API (RAWG)
+Para que GitHub Actions pueda publicar automáticamente la imagen de tu aplicación en internet, necesita tener permiso para entrar a tu cuenta de Docker Hub. Para esto, guardaremos tus credenciales de forma segura usando los "Secrets" de GitHub.
 
-En tu archivo `src/pages/Home.jsx`:
-1. Crea los estados locales: `games`, `isLoading`, `error`.
-2. Configura un `useEffect` con dependencias vacías `[]`.
-3. Haz un `fetch` a `https://api.rawg.io/api/games?key=TU_API_KEY_AQUI`.
-4. Utiliza el método `.map()` en tu JSX para iterar sobre la variable `games` y renderizar múltiples componentes `<GameCard />`.
+### Pasos para agregar tus credenciales:
 
-## 🏃‍♂️ Paso 7: Ejecutar el Proyecto
+1. Ve a la página principal de tu repositorio en GitHub.
+2. Haz clic en la pestaña **Settings** (⚙️ Configuración) en la parte superior.
+3. En el menú lateral izquierdo, baja hasta la sección "Security", despliega **Secrets and variables** y haz clic en **Actions**.
+4. Haz clic en el botón verde que dice **New repository secret**.
 
-Para levantar el servidor de desarrollo y ver tu catálogo de juegos en vivo:
+Deberás repetir este proceso para crear **dos** secretos diferentes:
+
+**Primer Secreto (Tu Usuario):**
+* **Name:** Escribe exactamente `DOCKER_USERNAME` (todo en mayúsculas).
+* **Secret:** Escribe tu nombre de usuario público de Docker Hub.
+* Haz clic en **Add secret**.
+
+**Segundo Secreto (Tu Contraseña):**
+* Haz clic nuevamente en **New repository secret**.
+* **Name:** Escribe exactamente `DOCKER_PASSWORD` (todo en mayúsculas).
+* **Secret:** Escribe la contraseña real con la que inicias sesión en Docker Hub.
+* Haz clic en **Add secret**.
+
+> **Nota:** Al guardarlos como "Secrets", GitHub los encripta. Nadie (ni tú, ni el profesor, ni otros colaboradores) podrá volver a ver la contraseña en texto plano, solo el bot encargado de subir la imagen.
+
+## 🧪 Pruebas Unitarias
+
+La calidad del código se valida mediante **Vitest** y **React Testing Library**. Las pruebas cubren el ciclo de vida de los componentes, incluyendo el manejo de estados asíncronos (Carga, Éxito y Error).
+
+### Comandos de Testing
+Desde la terminal, utiliza los siguientes scripts configurados en el `package.json`:
 
 ```bash
-npm run dev
+# Ejecutar pruebas una sola vez
+npm run test
+
+# Ejecutar pruebas en modo observador (ideal para desarrollo)
+npm run test:watch
+
+## 🐳 Dockerización (Despliegue)
+
+Este proyecto utiliza Docker para garantizar que la aplicación se ejecute de forma consistente en cualquier entorno. Seguimos un proceso de tres pasos para construir, ejecutar y gestionar el contenedor.
+
+### 1. Construir la Imagen
+Este comando crea una imagen optimizada que contiene el servidor Nginx y los archivos estáticos de la aplicación. Sustituye `<tu-usuario>` por tu nombre de usuario en Docker Hub.
+
+```bash
+docker build -t <tu-usuario>/proyecto-frontend-ii:latest .
 ```
-Abre `http://localhost:5173` en tu navegador para ver el resultado.
+
+### 2. Ejecutar el Contenedor
+Inicia la aplicación mapeando el puerto **8080** de tu computadora al puerto **80** interno del contenedor (donde escucha Nginx).
+
+```bash
+docker run -d -p 8080:80 --name frontend-app <tu-usuario>/proyecto-frontend-ii:latest
+```
+* **Verificación:** Abre tu navegador en [http://localhost:8080](http://localhost:8080).
+
+### 3. Gestión y Mantenimiento
+Comandos esenciales para controlar el ciclo de vida de los contenedores en el laboratorio:
+
+```bash
+# Listar contenedores activos
+docker ps
+
+# Detener el servidor
+docker stop frontend-app
+
+# Reiniciar el contenedor previamente detenido
+docker start frontend-app
+
+# Eliminar el contenedor para liberar recursos
+docker rm -f frontend-app
+
+# Consultar las imágenes almacenadas localmente
+docker images
+```
+
+## 🤝 Guía de Colaboración (Workflow)
+
+Para este proyecto, seguimos un flujo de trabajo profesional basado en ramas por actividad y consolidación de commits. Este método asegura que la rama `main` se mantenga limpia y sea fácil de rastrear para las herramientas de automatización.
+
+### 1. Creación de Rama por Actividad
+Cada tarea o práctica debe realizarse en su propia rama. Nunca trabajes directamente sobre `main`.
+
+1. Asegúrate de tener la última versión de la rama principal:
+   ```bash
+   git checkout main
+   git pull origin main
+   ```
+2. Crea una rama nueva para tu actividad actual:
+   ```bash
+   git checkout -b actividad/nombre-de-la-tarea
+   ```
+
+### 2. Desarrollo y Commits
+Realiza tus cambios y crea commits con mensajes claros. Se recomienda usar el estándar de **Conventional Commits** (ej: `feat: agregar lógica de suma` o `fix: corregir error de estilo`).
+
+### 3. Pull Request (PR)
+Una vez finalizada la actividad:
+1. Sube tu rama al repositorio: `git push origin actividad/nombre-de-la-tarea`.
+2. Ve a GitHub y abre un **Pull Request** desde tu rama hacia `main`.
+3. El sistema ejecutará automáticamente los tests. Si los tests fallan, el PR no podrá ser integrado.
+
+### 4. Squash and Merge (Fusión)
+La integración de la actividad a la rama principal se realizará exclusivamente mediante **Squash and merge**.
+
+* **¿Qué es?**: Esta opción combina todos los commits de tu rama (incluyendo los de prueba o corrección de errores) en un **único commit limpio** en `main`.
+* **Beneficio**: Facilita el trabajo de *Semantic Release*, ya que cada actividad se registra como un solo cambio significativo en el historial del proyecto.
+
+### 5. Finalización
+Una vez que el PR ha sido fusionado, puedes borrar tu rama local:
+```bash
+git checkout main
+git pull origin main
+git branch -d actividad/nombre-de-la-tarea
+```
