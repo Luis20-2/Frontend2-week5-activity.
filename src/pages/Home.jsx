@@ -46,7 +46,7 @@ const Home = () => {
   // 4. Renderizado principal
   return (
     <div className="container">
-      <h2 className="title">Juegos Populares</h2>
+      <h2 className="title">Juegos Chidos</h2>
 
       <div className="games-grid">
         {/* Iteramos sobre el arreglo 'games' */}
@@ -59,3 +59,8 @@ const Home = () => {
 };
 
 export default Home;
+
+// NOTAS:
+// - Se han nombrado los estados y funciones en inglés para seguir las mejores prácticas.
+// - Se ha implementado un manejo de errores básico para mejorar la experiencia del usuario.
+// - El renderizado condicional asegura que el usuario vea mensajes claros durante la carga o en caso de error.
